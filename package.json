@@ -1,0 +1,32 @@
+{
+  "name": "dwd-assignment4",
+  "version": "1.0.0",
+  "description": "assingment4",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gracywhelihan/dwd-assignment4.git"
+  },
+  "keywords": [
+    "dynamic",
+    "web",
+    "development"
+  ],
+  "author": "Gracy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gracywhelihan/dwd-assignment4/issues"
+  },
+  "homepage": "https://github.com/gracywhelihan/dwd-assignment4#readme",
+  "dependencies": {
+    "afinn-111": "^2.0.1",
+    "afinn-165": "^2.0.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}
