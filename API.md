@@ -1,0 +1,25 @@
+route: /all
+GET
+request body format : {"pastas":{"short rib tortellin":5,"pici freschi cacio e pepe":4.5,"fettuccine funghi":4,"double raviolo":4.8,"Spaghetti Limone":4,"mac n cheese":3.8,"lasagna":4.7,"buttered noddles":3,"oranges":1,"vodka sauce":4,"bow tie":2,"pastaloni":3,"pesto":4,"tuna":1,"gnocci":3.5}}
+
+route: /best
+GET
+request body format:
+ {
+    pasta: bestPasta,
+    rating: bestRating
+ }
+
+
+ route: /search/:pasta
+ GET
+ request body format:
+ {
+            status: "found",
+            pasta: pasta,
+            rating: pastas[pasta]
+        }
+
+route:
+POST
+enter pasta and rating into input boxes

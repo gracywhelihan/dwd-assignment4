@@ -1,10 +1,7 @@
 
 var fs = require('fs');
-var data = fs.readFileSync('words.json');
-var additional = JSON.parse(data);
-
-var afinndata = fs.readFileSync('afin111.json');
-var afinn = JSON.parse(afinndata);
+var data = fs.readFileSync('pastas.json');
+var pastas = JSON.parse(data);
 
 
 console.log("server is running");
@@ -28,71 +25,55 @@ app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 app.use(cors());
 
-app.post('/analyze', analyzeThis);
+app.post('/addDish', addDish);
 
-function analyzeThis(request, response){
-    var txt =  request.body.text;
-    var words = txt.split(/\W+/);
-    var totalScore = 0;
-    var found = false;
-    var wordlist = [];
-    for(var i =0; i < words.length; i++){
-        var word = words[i];
-        var score = 0;
-        if(additional.hasOwnProperty(word)){
-            found = true;
-            score += Number(additional[word]);
-        }else if(afinn.hasOwnProperty(word)){
-            found = true;
-            score += Number(additional[word]);
-        }
-
-        if(found){
-            wordlist.push({
-                word: word,
-                score: score
-            })
-        }
-        totalScore += score;
-    }
-    var comp = totalScore/words.length;
-    var reply ={
-        score: totalScore,
-        comparative: comp
-    }
-    response.send(reply);
-}
-
-app.get('/add/:word/:score?', addWord);
-
-function addWord(request, response) {
-    var data = request.params;
-    var word = data.word;
-    var score = Number(data.score);
-    if(!score){
+function addDish(request, response){
+    var data =  request.body;
+    var pasta = data.pasta;
+    var rating = Number(data.rating);
+    if(!rating){
         var reply = {
             msg: "score is required"
         }
     }else{
-        additional[word] = score;
-        console.log(additional, word);
-        var data = JSON.stringify(additional, null);
-        console.log(data);
-        //write to file
-        fs.writeFile('words.json', data, finished);
-        function finished(err) {
-            console.log('all set');
+            pastas[pasta] = rating;
+            var jsondata = JSON.stringify(pastas, null);
+            console.log(jsondata);
+            //write to file
+            fs.writeFile('pastas.json', jsondata, finished);
+            function finished(err) {
+                console.log('all set');
+    
+                var reply = {
+                   pasta: pasta,
+                   rating: rating,
+                   status: "success"
+                }
+    
+                response.send(reply);
+            }
+    
+        }
+}
 
-            var reply = {
-               word: word,
-               score: score,
-               status: "success"
+app.get('/best', bestPasta);
+
+function bestPasta(request, response) {
+    var bestRating = -1;
+    var bestPasta;
+     for(pasta in pastas){
+        if(pastas[pasta] > bestRating){
+            bestPasta = pasta;
+            bestRating = pastas[pasta];
+        }
+    }
+
+            var data = {
+               pasta: bestPasta,
+               rating: bestRating
             }
 
-            response.send(reply);
-        }
-
-    }
+            response.send(data);
     
 
 }
@@ -100,30 +81,30 @@ function addWord(request, response) {
 app.get('/all', sendAll);
 
 function sendAll(request, response) {
+    //pasta = request.params
     var data = {
-        additional: additional,
-        afinn: afinn
+        pastas: pastas,
     }
 
     response.send(data);
 }
 
 
-app.get('/search/:word', searchWord);
+app.get('/search/:pasta', searchPasta);
 
-function searchWord(request, response){
-    var word = request.params.word;
+function searchPasta(request, response){
+    var pasta = request.params.pasta;
     var reply;
-    if(words[word]){
+    if(pastas[pasta]){
         reply = {
             status: "found",
-            word: word,
-            scrore: words[word]
+            pasta: pasta,
+            rating: pastas[pasta]
         }
     }else{
         reply = {
             status: "not found",
-            word: word
+            pasta: pasta
         }
     }
     response.send(reply);
